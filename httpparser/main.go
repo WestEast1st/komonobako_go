@@ -17,7 +17,9 @@ type Result struct {
 func main() {
 	f, _ := os.Open("test.html")
 	r := bufio.NewReader(f)
-	ParseItem(r)
+	/*
+		ParseItem(r)
+	*/
 }
 
 func ParseItem(r io.Reader) []Result {

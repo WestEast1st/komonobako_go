@@ -20,14 +20,7 @@ func main() {
 	defer cancel()
 	ctx, cancel = context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
-
-	go func() {
-		for index := 0; index < 5; index++ {
-			log.Println(index + 1)
-			time.Sleep(1 * time.Second)
-		}
-	}()
-	showURL := "http://localhost/xss/test.php"
+	showURL := "http://localhost/xss"
 	var res string
 	var buf []byte
 	chromedp.ListenTarget(ctx, func(ev interface{}) {
@@ -42,10 +35,12 @@ func main() {
 			}()
 		}
 	})
-	err := chr.Run(ctx, chr.Tasks{
-		chr.Navigate(showURL),
-		chr.CaptureScreenshot(&buf),
-		chr.OuterHTML("html", &res),
+	err := chromedp.Run(ctx, chromedp.Tasks{
+		chromedp.Navigate(showURL),
+		chromedp.SendKeys(`//input[@name="input"]`, "<script>document.body.insertAdjacentHTML('afterbegin','<div id=set_Token >Hello! WWW!</div>');</script>"),
+		chromedp.Submit(`//input[@name="input"]`),
+		chromedp.CaptureScreenshot(&buf),
+		chromedp.OuterHTML("html", &res),
 	})
 	if err != nil {
 		fmt.Println(buf)
