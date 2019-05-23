@@ -11,12 +11,31 @@ import (
 func main() {
 	rowURL := "http://localhost"
 	purseFinishedURL, _ := url.Parse(rowURL)
-	inputName := []string{"input"}
-	tmplateURL := GetTemplateURL(purseFinishedURL, inputName)
+	inputName := []string{"input", "text", "line"}
+	templateURL := GetTemplateURL(purseFinishedURL, inputName)
+	data := []string{"hoge", "fuga", "piyo"}
+	ReplaceOnSimpleList(templateURL, inputName, data)
+
+}
+func ReplaceOnSimpleList(templateURL string, inputName []string, data []string) {
 	replaceValues := map[string]string{}
-	for _, v := range []string{"hoge", "fuga", "piyo"} {
-		replaceValues["input"] = v
-		fmt.Println(ReplaceTemplateURL(tmplateURL, replaceValues))
+	for _, name := range inputName {
+		defaultValue := replaceValues[name]
+		for _, v := range data {
+			replaceValues[name] = v
+			fmt.Println(ReplaceTemplateURL(templateURL, replaceValues))
+		}
+		replaceValues[name] = defaultValue
+	}
+}
+
+func ReplaceOnAllSimpleList(templateURL string, inputName []string, data []string) {
+	replaceValues := map[string]string{}
+	for _, v := range data {
+		for _, name := range inputName {
+			replaceValues[name] = v
+		}
+		fmt.Println(ReplaceTemplateURL(templateURL, replaceValues))
 	}
 }
 
